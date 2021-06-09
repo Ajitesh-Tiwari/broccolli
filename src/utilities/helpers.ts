@@ -1,0 +1,1 @@
+export type GenericCallback<T> = (error: Error, result: T) => void;

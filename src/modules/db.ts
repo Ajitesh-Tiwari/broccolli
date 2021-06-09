@@ -1,4 +1,5 @@
 import MongoClient from 'mongodb';
+import { GenericCallback } from '../utilities/helpers';
 
 export class DB {
 	public uri: string;
@@ -34,13 +35,13 @@ export class DB {
 		}
 	}
 
-	public putToCollection(obj: object, callback: any) {
+	public putToCollection(obj: object, callback: GenericCallback<any>) {
 		this.dbclient.db(this.dbName).collection(this.collectionName).insertOne(obj, (err, res) => {
 			callback(err, res);
 		});
 	}
 
-	public async getValueFromCollection(id: string, callback: any) {
+	public async getValueFromCollection(id: string, callback: GenericCallback<any>) {
 		this.dbclient.db(this.dbName).collection(this.collectionName).findOne({ _id: id }, (err, res) => {
 			callback(err, res);
 		});

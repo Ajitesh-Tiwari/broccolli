@@ -3,6 +3,7 @@ import { DB } from '../modules/db';
 import { Secret } from '../modules/secret';
 import totp from '../modules/totp';
 import { config } from '../utilities/config';
+import { GenericCallback } from '../utilities/helpers';
 
 const router = express.Router();
 
@@ -45,18 +46,18 @@ router.get('/:user/totp', (req, res) => {
 	});
 });
 
-function putToDB(db: DB, obj: any, callback: any) {
+function putToDB(db: DB, obj: any, callback: GenericCallback<any>) {
 	db.putToCollection(obj, callback);
 }
 
-function getValueFromDB(db: DB, key: string, callback: any) {
+function getValueFromDB(db: DB, key: string, callback: GenericCallback<any>) {
 	db.getValueFromCollection(key, callback);
 }
 
 function getObject(reqBody: RequestBody, secret: string) {
 	return {
 		_id: reqBody.user,
-		secret: secret
+		secret
 	};
 }
 
