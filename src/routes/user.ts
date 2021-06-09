@@ -1,9 +1,14 @@
 import express from 'express';
-import { dbs } from '../modules/db';
+import { DB } from '../modules/db';
 import { Secret } from '../modules/secret';
 import totp from '../modules/totp';
+import { config } from '../utilities/config';
 
 const router = express.Router();
+
+class RequestBody {
+	user: string;
+}
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -12,11 +17,48 @@ router.use(function timeLog(req, res, next) {
 });
 
 // define the home page route
-router.get('/', (req, res) => {
-	dbs.connect();
-	const secretValue = new Secret().createRandomSecret();
-	res.send(totp.generateTotp(secretValue));
+router.post('/', (req, res) => {
+	const dbObject = getObject(req.body as RequestBody, new Secret().createRandomSecret());
+	putToDB(config.DB, dbObject, (err: Error, response: any) => {
+		if (err) {
+			console.log(err.message);
+			res.send(err.message);
+			return;
+		}
+		res.send(`User ${(req.body as RequestBody).user} created`);
+	});
 });
+
+router.get('/:user/totp', (req, res) => {
+	getValueFromDB(config.DB, req.params.user, (err: Error, response: any) => {
+		if (err) {
+			res.send(err);
+			return;
+		}
+
+		if (response == null) {
+			res.send('no response');
+			return;
+		}
+
+		res.send(totp.generateTotp(response.secret));
+	});
+});
+
+function putToDB(db: DB, obj: any, callback: any) {
+	db.putToCollection(obj, callback);
+}
+
+function getValueFromDB(db: DB, key: string, callback: any) {
+	db.getValueFromCollection(key, callback);
+}
+
+function getObject(reqBody: RequestBody, secret: string) {
+	return {
+		_id: reqBody.user,
+		secret: secret
+	};
+}
 
 // define the about route
 router.get('/about', (req, res) => {
