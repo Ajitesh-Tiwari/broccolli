@@ -3,7 +3,7 @@ import { DB } from '../modules/db';
 import { Secret } from '../modules/secret';
 import totp from '../modules/totp';
 import { config } from '../utilities/config';
-import { GenericCallback } from '../utilities/helpers';
+import { GenericCallback, MongoResponseBody } from '../utilities/helpers';
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/:user/totp', (req, res) => {
-	getValueFromDB(config.DB, req.params.user, (err: Error, response: any) => {
+	getValueFromDB(config.DB, req.params.user, (err: Error, response: MongoResponseBody) => {
 		if (err) {
 			res.send(err);
 			return;
@@ -50,7 +50,7 @@ function putToDB(db: DB, obj: any, callback: GenericCallback<any>) {
 	db.putToCollection(obj, callback);
 }
 
-function getValueFromDB(db: DB, key: string, callback: GenericCallback<any>) {
+function getValueFromDB(db: DB, key: string, callback: GenericCallback<MongoResponseBody>) {
 	db.getValueFromCollection(key, callback);
 }
 

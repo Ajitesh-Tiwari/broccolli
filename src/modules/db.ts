@@ -1,5 +1,5 @@
 import MongoClient from 'mongodb';
-import { GenericCallback } from '../utilities/helpers';
+import { GenericCallback, MongoResponseBody } from '../utilities/helpers';
 
 export class DB {
 	public uri: string;
@@ -45,13 +45,13 @@ export class DB {
 		}
 	}
 
-	public async getValueFromCollection(id: string, callback: GenericCallback<any>) {
+	public async getValueFromCollection(id: string, callback: GenericCallback<MongoResponseBody>) {
 		try {
 			this.dbclient.db(this.dbName).collection(this.collectionName).findOne({ _id: id }, (err, res) => {
 				callback(err, res);
 			});
 		} catch (e) {
-			callback(Error("Something isn't working currently."), "")
+			callback(Error("Something isn't working currently."), null)
 		}
 	}
 
