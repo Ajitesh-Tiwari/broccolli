@@ -36,15 +36,23 @@ export class DB {
 	}
 
 	public putToCollection(obj: object, callback: GenericCallback<any>) {
-		this.dbclient.db(this.dbName).collection(this.collectionName).insertOne(obj, (err, res) => {
-			callback(err, res);
-		});
+		try {
+			this.dbclient.db(this.dbName).collection(this.collectionName).insertOne(obj, (err, res) => {
+				callback(err, res);
+			});
+		} catch (e) {
+			callback(Error("Something isn't working currently."), "")
+		}
 	}
 
 	public async getValueFromCollection(id: string, callback: GenericCallback<any>) {
-		this.dbclient.db(this.dbName).collection(this.collectionName).findOne({ _id: id }, (err, res) => {
-			callback(err, res);
-		});
+		try {
+			this.dbclient.db(this.dbName).collection(this.collectionName).findOne({ _id: id }, (err, res) => {
+				callback(err, res);
+			});
+		} catch (e) {
+			callback(Error("Something isn't working currently."), "")
+		}
 	}
 
 	public close() {
