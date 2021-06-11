@@ -3,13 +3,9 @@ import { DB } from '../modules/db';
 import { Secret } from '../modules/secret';
 import totp from '../modules/totp';
 import { config } from '../utilities/config';
-import { GenericCallback, MongoResponseBody } from '../utilities/helpers';
+import { GenericCallback, LoginBody, MongoResponseBody, RequestBody } from '../utilities/helpers';
 
 const router = express.Router();
-
-class RequestBody {
-	user: string;
-}
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -30,8 +26,9 @@ router.post('/', (req, res) => {
 	});
 });
 
-router.get('/:user/totp', (req, res) => {
-	getValueFromDB(config.DB, req.params.user, (err: Error, response: MongoResponseBody) => {
+router.post('/login', (req, res) => {
+	const payload = req.body as LoginBody;
+	getValueFromDB(config.DB, payload.user, (err: Error, response: MongoResponseBody) => {
 		if (err) {
 			res.send(err);
 			return;
@@ -42,7 +39,11 @@ router.get('/:user/totp', (req, res) => {
 			return;
 		}
 
-		res.send(totp.generateTotp(response.secret));
+		if (payload.otp.toString() == totp.generateTotp(response.secret).toString()) {
+			res.send('Success');
+		} else {
+			res.send('Unauthorized');
+		}
 	});
 });
 

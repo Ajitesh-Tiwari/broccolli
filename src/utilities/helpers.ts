@@ -4,3 +4,12 @@ export class MongoResponseBody {
 	_id: string
 	secret: string
 }
+
+export class RequestBody {
+	user: string;
+}
+
+export class LoginBody {
+	user: string
+	otp: number
+}
