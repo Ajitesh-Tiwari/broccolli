@@ -39,7 +39,7 @@ router.post('/login', (req, res) => {
 			return;
 		}
 
-		if (payload.otp.toString() == totp.generateTotp(response.secret).toString()) {
+		if (payload.otp == totp.generateTotp(response.secret).toString()) {
 			res.send('Success');
 		} else {
 			res.send('Unauthorized');

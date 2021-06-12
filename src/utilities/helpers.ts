@@ -11,5 +11,5 @@ export class RequestBody {
 
 export class LoginBody {
 	user: string
-	otp: number
+	otp: string
 }
